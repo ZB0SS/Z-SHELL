@@ -2,6 +2,7 @@ from string import ascii_letters, printable
 import pyximport
 pyximport.install()
 from tokens import *
+from termcolor import colored
 
 LETTERS = ascii_letters
 
@@ -62,7 +63,10 @@ class Lexer:
             if self.currentChar is ' ':
                 pass
             else:
-                print('Invalid Syntax')
+                self.commandPassed = False
+                print(colored(f'\tERROR: UNEXPECTED TOKEN: "{self.currentChar}"', 'red'))
+                # Terminate command after error
+                self.currentChar = None
                 TOKENS.clear()
                 return None
         self.pos -= 1
@@ -93,7 +97,10 @@ class Lexer:
             if self.currentChar == '"':
                 return Token(TT_ARG, arg)
             self.advance()
-        print("ERROR: String didn't end with '\"'")
+        self.commandPassed = False
+        print(colored("\tERROR: String didn't end with '\"'", 'red'))
+        # Terminate command after error
+        self.currentChar = None
         TOKENS.clear()
         return None
 
